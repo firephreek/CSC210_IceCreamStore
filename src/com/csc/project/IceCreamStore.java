@@ -79,13 +79,6 @@ public class IceCreamStore {
         return calculateCost(itemNames) + calculateTax(itemNames);
     }
 
-    public void addItem(String itemName) {
-        Item item = getItem(itemName);
-        if (item != null) {
-            this.cartItems.add(item);
-        }
-    }
-
     private Item getItem(String itemName) {
         for (Item storeItem : this.storeItems) {
             if (storeItem.getName().equalsIgnoreCase(itemName)) {
@@ -93,17 +86,5 @@ public class IceCreamStore {
             }
         }
         return EMPTY_ITEM;
-    }
-
-    public void removeItem(String itemName) {
-        for (Item cartItem : this.cartItems) {
-            if (cartItem.getName().equalsIgnoreCase(itemName)) {
-                this.cartItems.remove(cartItem);
-            }
-        }
-    }
-
-    public void clearCart() {
-        this.cartItems = new ArrayList<>();
     }
 }
