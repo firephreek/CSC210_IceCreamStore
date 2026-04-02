@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IceCreamStore {
+    private static final Item EMPTY_ITEM = new Item("", 0.0);
     private final double TAX_RATE = 0.08;
 
     final private User[] users;
@@ -57,24 +58,25 @@ public class IceCreamStore {
             }
         }
 
-        return -1;
+        return EMPTY_ITEM.getCost();
     }
 
-    public double calculateCost(Item[] items) {
+    public double calculateCost(String[] itemNames) {
         double total = 0.0;
-        for (Item item : items) {
+        for (String itemName : itemNames) {
+            Item item = getItem(itemName);
             total += item.getCost();
         }
 
         return total;
     }
 
-    public double calculateTax(Item[] items) {
-        return calculateCost(items) * TAX_RATE;
+    public double calculateTax(String[] itemNames) {
+        return calculateCost(itemNames) * TAX_RATE;
     }
 
-    public double getTotalCost(Item[] items) {
-        return calculateCost(items) + calculateTax(items);
+    public double calculateTotal(String[] itemNames) {
+        return calculateCost(itemNames) + calculateTax(itemNames);
     }
 
     public void addItem(String itemName) {
@@ -90,12 +92,12 @@ public class IceCreamStore {
                 return storeItem;
             }
         }
-        return null;
+        return EMPTY_ITEM;
     }
 
     public void removeItem(String itemName) {
         for (Item cartItem : this.cartItems) {
-            if(cartItem.getName().equalsIgnoreCase(itemName)){
+            if (cartItem.getName().equalsIgnoreCase(itemName)) {
                 this.cartItems.remove(cartItem);
             }
         }
