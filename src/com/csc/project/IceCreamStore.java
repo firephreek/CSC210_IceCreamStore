@@ -1,3 +1,8 @@
+package com.csc.project;
+
+import com.csc.project.data.Item;
+import com.csc.project.data.User;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +44,7 @@ public class IceCreamStore {
         String[] names = new String[storeItems.length];
 
         for (int i = 0; i < storeItems.length; i++) {
-            names[i] = storeItems[i].name;
+            names[i] = storeItems[i].getName();
         }
 
         return names;
@@ -47,8 +52,8 @@ public class IceCreamStore {
 
     public double getItemPrice(String itemName) {
         for (Item item : storeItems) {
-            if (item.name.equalsIgnoreCase(itemName)) {
-                return item.cost;
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                return item.getCost();
             }
         }
 
@@ -58,7 +63,7 @@ public class IceCreamStore {
     public double calculateCost(Item[] items) {
         double total = 0.0;
         for (Item item : items) {
-            total += item.cost;
+            total += item.getCost();
         }
 
         return total;
@@ -81,7 +86,7 @@ public class IceCreamStore {
 
     private Item getItem(String itemName) {
         for (Item storeItem : this.storeItems) {
-            if (storeItem.name.equalsIgnoreCase(itemName)) {
+            if (storeItem.getName().equalsIgnoreCase(itemName)) {
                 return storeItem;
             }
         }
@@ -90,7 +95,7 @@ public class IceCreamStore {
 
     public void removeItem(String itemName) {
         for (Item cartItem : this.cartItems) {
-            if(cartItem.name.equalsIgnoreCase(itemName)){
+            if(cartItem.getName().equalsIgnoreCase(itemName)){
                 this.cartItems.remove(cartItem);
             }
         }

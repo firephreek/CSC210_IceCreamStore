@@ -1,3 +1,5 @@
+package com.csc.project.data;
+
 public class User
 {
     String username;
