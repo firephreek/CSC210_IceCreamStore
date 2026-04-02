@@ -1,6 +1,4 @@
-import javafx.application.Application;
-
-public class Main
+public class IceCreamStoreApp
 {
     public static void main(String[] args)
     {
