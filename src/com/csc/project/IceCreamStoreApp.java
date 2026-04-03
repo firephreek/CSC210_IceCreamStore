@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -38,7 +39,7 @@ public class IceCreamStoreApp extends Application {
 
     private Scene getLoginScene(Stage stage) {
         TextField usernameTextField = new TextField("Your username ");
-        TextField passwordTextField = new TextField("****");
+        PasswordField passwordField = new PasswordField();
         Label usernameLabel = new Label("Username: ");
         Label passwordLabel = new Label("Password: ");
 
@@ -61,7 +62,7 @@ public class IceCreamStoreApp extends Application {
                 usernameLabel,
                 usernameTextField,
                 passwordLabel,
-                passwordTextField,
+                passwordField,
                 loginButton,
                 errorLabel
         );
