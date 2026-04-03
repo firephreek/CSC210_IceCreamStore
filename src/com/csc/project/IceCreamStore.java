@@ -1,9 +1,10 @@
 package com.csc.project;
 
 import com.csc.project.data.Item;
+import com.csc.project.data.Store;
 import com.csc.project.data.User;
 
-public class IceCreamStore {
+public class IceCreamStore implements Store {
     private static final Item EMPTY_ITEM = new Item("", 0.0);
     private final double TAX_RATE = 0.08;
 
@@ -28,6 +29,7 @@ public class IceCreamStore {
                 });
     }
 
+    @Override
     public boolean login(String username, String password) {
         for (User user : this.users) {
             if (user.getUsername().equalsIgnoreCase(username.trim())) {
@@ -37,6 +39,7 @@ public class IceCreamStore {
         return false;
     }
 
+    @Override
     public String[] getItemNames() {
         String[] names = new String[storeItems.length];
 
@@ -47,6 +50,7 @@ public class IceCreamStore {
         return names;
     }
 
+    @Override
     public double getItemPrice(String itemName) {
         for (Item item : storeItems) {
             if (item.getName().equalsIgnoreCase(itemName.trim())) {
@@ -57,6 +61,7 @@ public class IceCreamStore {
         return EMPTY_ITEM.getCost();
     }
 
+    @Override
     public double calculateCost(String[] itemNames) {
         double total = 0.0;
         for (String itemName : itemNames) {
@@ -67,15 +72,18 @@ public class IceCreamStore {
         return total;
     }
 
+    @Override
     public double calculateTax(String[] itemNames) {
         return calculateCost(itemNames) * TAX_RATE;
     }
 
+    @Override
     public double calculateTotal(String[] itemNames) {
         return calculateCost(itemNames) + calculateTax(itemNames);
     }
 
-    private Item getItem(String itemName) {
+    @Override
+    public Item getItem(String itemName) {
         for (Item storeItem : this.storeItems) {
             if (storeItem.getName().equalsIgnoreCase(itemName.trim())) {
                 return storeItem;
@@ -84,7 +92,8 @@ public class IceCreamStore {
         return EMPTY_ITEM;
     }
 
-    Item[] getItems() {
+    @Override
+    public Item[] getItems() {
         return this.storeItems;
     }
 }
