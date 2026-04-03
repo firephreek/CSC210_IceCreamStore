@@ -33,6 +33,12 @@ class IceCreamStoreTest {
     }
 
     @Test
+    void loginValidUsernameWithTrailingAndLeadingWhiteSpaceAndValidPasswordReturnsTrue() {
+        boolean result = testStore.login(" user1 ", "validPassWord");
+        assertTrue(result);
+    }
+
+    @Test
     void login_ValidUsernameAndInvalidPasswordReturnsFalse() {
         boolean result = testStore.login("user1", "invalidPassWord");
         assertFalse(result);
@@ -56,6 +62,15 @@ class IceCreamStoreTest {
         assertEquals(1.00, price1);
 
         double price2 = testStore.getItemPrice("item 2");
+        assertEquals(2.00, price2);
+    }
+
+    @Test
+    void getItemPrice_ReturnsCorrectPriceForExistingItemsWhenNameHasTrailingOrLeadingWhitespace() {
+        double price1 = testStore.getItemPrice("item 1 ");
+        assertEquals(1.00, price1);
+
+        double price2 = testStore.getItemPrice(" item 2 ");
         assertEquals(2.00, price2);
     }
 
@@ -85,7 +100,7 @@ class IceCreamStoreTest {
         String[] itemNames = {"item 1", "item 2", "item 3", "item 4"};
         var result = testStore.calculateTotal(itemNames);
         double expected = (1.00 + 2.00 + 3.00 + 4.00) * 1.08;
-        assertEquals(expected , result);
+        assertEquals(expected, result);
     }
 
     @Test
@@ -93,6 +108,6 @@ class IceCreamStoreTest {
         String[] itemNames = {"item 2", "item 2", "item 3", "item 3", "item 4"};
         var result = testStore.calculateTotal(itemNames);
         double expected = (2.00 + 2.00 + 3.00 + 3.00 + 4.00) * 1.08;
-        assertEquals(expected , result);
+        assertEquals(expected, result);
     }
 }
