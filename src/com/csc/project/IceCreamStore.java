@@ -3,16 +3,12 @@ package com.csc.project;
 import com.csc.project.data.Item;
 import com.csc.project.data.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class IceCreamStore {
     private static final Item EMPTY_ITEM = new Item("", 0.0);
     private final double TAX_RATE = 0.08;
 
     final private User[] users;
     final private Item[] storeItems;
-    private List<Item> cartItems = new ArrayList<>();
 
     public IceCreamStore(User[] users, Item[] storeItems) {
         this.storeItems = storeItems;
@@ -34,7 +30,7 @@ public class IceCreamStore {
 
     public boolean login(String username, String password) {
         for (User user : this.users) {
-            if (user.getUsername().equalsIgnoreCase(username)) {
+            if (user.getUsername().equalsIgnoreCase(username.trim())) {
                 return user.validatePassword(password);
             }
         }
@@ -53,7 +49,7 @@ public class IceCreamStore {
 
     public double getItemPrice(String itemName) {
         for (Item item : storeItems) {
-            if (item.getName().equalsIgnoreCase(itemName)) {
+            if (item.getName().equalsIgnoreCase(itemName.trim())) {
                 return item.getCost();
             }
         }
@@ -81,10 +77,14 @@ public class IceCreamStore {
 
     private Item getItem(String itemName) {
         for (Item storeItem : this.storeItems) {
-            if (storeItem.getName().equalsIgnoreCase(itemName)) {
+            if (storeItem.getName().equalsIgnoreCase(itemName.trim())) {
                 return storeItem;
             }
         }
         return EMPTY_ITEM;
+    }
+
+    Item[] getItems() {
+        return this.storeItems;
     }
 }
