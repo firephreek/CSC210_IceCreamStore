@@ -4,4 +4,5 @@ module com.csc.icecream.IceCreamStoreApp {
 
     opens com.csc.project to javafx.fxml;
     exports com.csc.project;
+    exports com.csc.project.data;
 }
