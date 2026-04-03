@@ -50,8 +50,8 @@ public class IceCreamStoreApp extends Application {
         errorLabel.setTextFill(Color.RED);
         errorLabel.setFont(Font.font(10));
         loginButton.setOnAction(event -> {
-            if (store.login(usernameTextField.getText(), passwordTextField.getText())) {
-                // How to initiate a scene change from here?
+            boolean isValidLogin = store.login(usernameTextField.getText(), passwordField.getText());
+            if (isValidLogin) {
                 stage.setScene(getPosScene(stage));
             } else {
                 errorLabel.setText("Invalid username/password");
