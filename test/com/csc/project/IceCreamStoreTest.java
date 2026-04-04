@@ -1,7 +1,8 @@
 package com.csc.project;
 
-import com.csc.project.data.Item;
-import com.csc.project.data.User;
+import com.csc.project.data.IceCreamStore;
+import com.csc.project.models.Item;
+import com.csc.project.models.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

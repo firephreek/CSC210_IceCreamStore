@@ -1,8 +1,7 @@
-package com.csc.project;
+package com.csc.project.data;
 
-import com.csc.project.data.Item;
-import com.csc.project.data.Store;
-import com.csc.project.data.User;
+import com.csc.project.models.Item;
+import com.csc.project.models.User;
 
 public class IceCreamStore implements Store {
     private static final Item EMPTY_ITEM = new Item("", 0.0);

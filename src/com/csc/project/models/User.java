@@ -1,22 +1,19 @@
-package com.csc.project.data;
+package com.csc.project.models;
 
-public class User
-{
+public class User {
     String username;
     String password;
 
-    public User(String username, String password)
-    {
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 
-    public boolean validatePassword(String testPassword){
+    public boolean validatePassword(String testPassword) {
         return this.password.equals(testPassword);
     }
 }

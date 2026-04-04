@@ -1,5 +1,7 @@
 package com.csc.project.data;
 
+import com.csc.project.models.Item;
+
 public interface Store {
     boolean login(String username, String password);
 

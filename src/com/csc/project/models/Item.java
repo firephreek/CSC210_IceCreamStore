@@ -1,4 +1,4 @@
-package com.csc.project.data;
+package com.csc.project.models;
 
 public class Item {
     String name;
