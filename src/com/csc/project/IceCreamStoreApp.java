@@ -17,7 +17,7 @@ public class IceCreamStoreApp extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         stage.setTitle("Haskin Bobbins ICS POS");
         stage.setMaxHeight(420);
         stage.setMaxWidth(300);

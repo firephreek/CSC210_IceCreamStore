@@ -18,6 +18,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 public class SceneBuilder {
 
     public static Scene getLoginScene(Store store, Stage stage) {
@@ -75,30 +77,51 @@ public class SceneBuilder {
         return new Scene(mainBox, 400, 200);
     }
 
-    protected static Scene getPosScene(Store store, Stage stage) {
+    public static Scene getPosScene(Store store, Stage stage) {
         Item[] items = store.getItems();
 
+        // The box at the bottom that will hold our results
+        GridPane resultsBox = new GridPane(2, 8);
+        resultsBox.setPadding(new Insets(0, 10, 0, 0));
+        resultsBox.setAlignment(Pos.BASELINE_RIGHT);
+        resultsBox.setHgap(10);
+        resultsBox.setVgap(5);
+        resultsBox.setMaxWidth(200.0);
+        resultsBox.setMinWidth(200.0);
+
+        Font font = Font.font("Arial", FontWeight.BOLD, 12);
+
+        Label subTotalLabel = new Label("SubTotal:");
+        subTotalLabel.setFont(font);
+        Label subTotalValue = new Label("$0.00");
+
+        Label taxesLabel = new Label("Taxes:");
+        taxesLabel.setFont(font);
+        Label taxesValue = new Label("$0.00");
+
+        Label totalLabel = new Label("Total:");
+        totalLabel.setFont(font);
+        Label totalValue = new Label("$0.00");
+
+        resultsBox.add(subTotalLabel, 0, 0);
+        resultsBox.add(subTotalValue, 1, 0);
+        resultsBox.add(taxesLabel, 0, 1);
+        resultsBox.add(taxesValue, 1, 1);
+        resultsBox.add(totalLabel, 0, 2);
+        resultsBox.add(totalValue, 1, 2);
+
+        ColumnConstraints col1Constraint = new ColumnConstraints();
+        col1Constraint.setHalignment(HPos.RIGHT);
+        col1Constraint.setMinWidth(80);
+
+        ColumnConstraints col2Constraint = new ColumnConstraints();
+        col1Constraint.setHalignment(HPos.RIGHT);
+        col1Constraint.setMinWidth(70);
+
+        resultsBox.getColumnConstraints().addAll(col1Constraint, col2Constraint);
+
         // Grid for our menu items
-        Node headerPane = getHeaderPane(store, stage);
-        Node menuGridPane = getMenuGridPane(items);
-        Node resultsBox = getResultsBox(items);
-
-        VBox root = new VBox(10);
-        root.setPadding(new Insets(10, 0, 10, 0));
-        root.setAlignment(Pos.TOP_CENTER);
-        root.setStyle("-fx-background-color: #92c4fd;");
-
-        root.getChildren().addAll(
-                headerPane,
-                menuGridPane,
-                resultsBox
-        );
-
-        return new Scene(root, 300, 420);
-    }
-
-    private static Node getHeaderPane(Store store, Stage stage) {
-        VBox box = new VBox();
+        VBox headerPane = new VBox();
 
         Label titleLabel = new Label("Haskin Bobbins POS");
         titleLabel.setFont(Font.font("Georgia", FontWeight.BOLD, FontPosture.ITALIC, 24));
@@ -117,84 +140,79 @@ public class SceneBuilder {
         HBox logoutBox = new HBox(logoutLink);
         logoutBox.setAlignment(Pos.CENTER_RIGHT);
 
-        box.getChildren().addAll(titleBox, logoutBox);
+        headerPane.getChildren().addAll(titleBox, logoutBox);
 
-        return box;
-    }
-
-    private static GridPane getMenuGridPane(Item[] items) {
-        GridPane menuGridPane = new GridPane(2, 8);
-        menuGridPane.setHgap(20);
-        menuGridPane.setVgap(10);
-        menuGridPane.setMaxWidth(200.0);
-        menuGridPane.setMinWidth(200.0);
-        menuGridPane.setPadding(new Insets(12));
-        menuGridPane.setStyle("-fx-background-color: #fff;" +
+        GridPane menuGrid = new GridPane(2, 8);
+        menuGrid.setHgap(20);
+        menuGrid.setVgap(10);
+        menuGrid.setMaxWidth(200.0);
+        menuGrid.setMinWidth(200.0);
+        menuGrid.setPadding(new Insets(12));
+        menuGrid.setStyle("-fx-background-color: #fff;" +
                 "-fx-border-color: #ddd;" +
                 "-fx-border-radius: 12;" +
                 " -fx-background-radius: 12;"
         );
 
         // Menu Grid Headers
-        menuGridPane.add(new Text("Item"), 0, 0);
-        menuGridPane.add(new Text("Price"), 1, 0);
-        menuGridPane.add(new Text("Qty"), 2, 0);
+        menuGrid.add(new Text("Item"), 0, 0);
+        menuGrid.add(new Text("Price"), 1, 0);
+        menuGrid.add(new Text("Qty"), 2, 0);
 
         // Menu Grid Rows
+        TextField[] quantityFields = new TextField[items.length];
+
         for (int i = 1; i <= items.length; i++) {
             Item item = items[i - 1];
             Text itemNameText = new Text(item.getName());
             Text itemCostText = new Text(String.format("$%.2f", item.getCost()));
 
             TextField qtyEntryField = new TextField("0");
-            menuGridPane.add(itemNameText, 0, i);
-            menuGridPane.add(itemCostText, 1, i);
-            menuGridPane.add(qtyEntryField, 2, i);
+            quantityFields[i - 1] = qtyEntryField;
+
+            menuGrid.add(itemNameText, 0, i);
+            menuGrid.add(itemCostText, 1, i);
+            menuGrid.add(qtyEntryField, 2, i);
         }
 
+
         Button calculateButton = new Button("Calculate");
+        calculateButton.setOnAction(event -> {
+            ArrayList<String> selectedItems = new ArrayList<>();
+            for (int i = 0; i < quantityFields.length; i++) {
+                int quantity = Integer.parseInt(quantityFields[i].getText());
+                for (int j = 0; j < quantity; j++) {
+                    selectedItems.add(items[i].getName());
+                }
+            }
+
+            String[] itemNames = selectedItems.toArray(value -> new String[0]);
+            double subCost = store.calculateCost(itemNames);
+
+            double taxes = store.calculateTax(itemNames);
+            double total = store.calculateTotal(itemNames);
+
+            subTotalValue.setText(String.format("$%.2f", subCost));
+            taxesValue.setText(String.format("$%.2f", taxes));
+            totalValue.setText(String.format("$%.2f", total));
+        });
+
         HBox calculateBox = new HBox();
         calculateBox.setAlignment(Pos.BASELINE_RIGHT);
         calculateBox.getChildren().add(calculateButton);
-        menuGridPane.add(calculateBox, 0, items.length + 2, 3, 1);
+        menuGrid.add(calculateBox, 0, items.length + 2, 3, 1);
 
-        return menuGridPane;
-    }
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(10, 0, 10, 0));
+        root.setAlignment(Pos.TOP_CENTER);
+        root.setStyle("-fx-background-color: #92c4fd;");
 
-    private static GridPane getResultsBox(Item[] items) {
-        GridPane gridPane = new GridPane(2, 8);
-        gridPane.setPadding(new Insets(0, 10, 0, 0));
-        gridPane.setHgap(10);
-        gridPane.setVgap(5);
-        gridPane.setMaxWidth(200.0);
-        gridPane.setMinWidth(200.0);
+        root.getChildren().addAll(
+                headerPane,
+                menuGrid,
+                resultsBox
+        );
 
-        Font font = Font.font("Arial", FontWeight.BOLD, 12);
-        Label subTotalLabel = new Label("SubTotal:");
-        subTotalLabel.setFont(font);
-        Label subTotalValue = new Label("1.00");
-        Label taxesLabel = new Label("Taxes:");
-        taxesLabel.setFont(font);
-        Label taxesValue = new Label("2.00");
-
-        Label totalLabel = new Label("Total:");
-        totalLabel.setFont(font);
-        Label totalValue = new Label("3.00");
-
-        gridPane.add(subTotalLabel, 0, 0);
-        gridPane.add(subTotalValue, 1, 0);
-
-        gridPane.add(taxesLabel, 0, 1);
-        gridPane.add(taxesValue, 1, 1);
-
-        gridPane.add(totalLabel, 0, 2);
-        gridPane.add(totalValue, 1, 2);
-
-        ColumnConstraints col1Constraint = new ColumnConstraints();
-        col1Constraint.setHalignment(HPos.RIGHT);
-        col1Constraint.setPercentWidth(80);
-        gridPane.getColumnConstraints().add(col1Constraint);
-
-        return gridPane;
+        return new Scene(root, 300, 420);
     }
 }
