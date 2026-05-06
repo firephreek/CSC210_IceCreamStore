@@ -20,9 +20,13 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-public class SceneBuilder {
+public class SceneBuilder{
 
     public static Scene getLoginScene(Store store, Stage stage) {
+        // This line now allows the window to be adjustable.
+        final double WIDTH = 400;
+        final double HEIGHT = 200;
+
         Label loginHeader = new Label("Haskin Bobbins POS");
         loginHeader.setFont(Font.font("Georgia", FontWeight.BOLD, FontPosture.ITALIC, 24));
         HBox titleBox = new HBox(loginHeader);
@@ -68,19 +72,30 @@ public class SceneBuilder {
                 "-fx-border-radius: 12;" +
                 " -fx-background-radius: 12;"
         );
+        // This line allows the window to expand horizontally
+        loginGrid.setMaxWidth(Double.MAX_VALUE);
 
         VBox mainBox = new VBox(10, loginHeader, loginGrid);
 
         mainBox.setAlignment(Pos.CENTER);
         mainBox.setStyle("-fx-background-color: #92c4fd;");
         VBox.setMargin(loginGrid, new Insets(0, 20, 0, 20));
-        return new Scene(mainBox, 400, 200);
+
+        // New! This set the maximum size of the window when adjusting the software.
+        stage.setMaxWidth(WIDTH * 2);
+        stage.setMaxHeight(HEIGHT * 2);
+        stage.setMinWidth(WIDTH);
+        stage.setMinHeight(HEIGHT);
+
+        return new Scene(mainBox, WIDTH, HEIGHT);
     }
 
     public static Scene getPosScene(Store store, Stage stage) {
+        final double WIDTH = 300;
+        final double HEIGHT = 420;
+
         Item[] items = store.getItems();
 
-        // The box at the bottom that will hold our results
         GridPane resultsBox = new GridPane(2, 8);
         resultsBox.setPadding(new Insets(0, 10, 0, 0));
         resultsBox.setAlignment(Pos.BASELINE_RIGHT);
@@ -120,7 +135,6 @@ public class SceneBuilder {
 
         resultsBox.getColumnConstraints().addAll(col1Constraint, col2Constraint);
 
-        // Grid for our menu items
         VBox headerPane = new VBox();
 
         Label titleLabel = new Label("Haskin Bobbins POS");
@@ -145,8 +159,9 @@ public class SceneBuilder {
         GridPane menuGrid = new GridPane(2, 8);
         menuGrid.setHgap(20);
         menuGrid.setVgap(10);
-        menuGrid.setMaxWidth(200.0);
         menuGrid.setMinWidth(200.0);
+        menuGrid.setMaxWidth(Double.MAX_VALUE);
+        menuGrid.setAlignment(Pos.CENTER);
         menuGrid.setPadding(new Insets(12));
         menuGrid.setStyle("-fx-background-color: #fff;" +
                 "-fx-border-color: #ddd;" +
@@ -154,12 +169,10 @@ public class SceneBuilder {
                 " -fx-background-radius: 12;"
         );
 
-        // Menu Grid Headers
         menuGrid.add(new Text("Item"), 0, 0);
         menuGrid.add(new Text("Price"), 1, 0);
         menuGrid.add(new Text("Qty"), 2, 0);
 
-        // Menu Grid Rows
         TextField[] quantityFields = new TextField[items.length];
 
         for (int i = 1; i <= items.length; i++) {
@@ -176,12 +189,38 @@ public class SceneBuilder {
         }
 
 
+        // Added the exception error label
+        Label errorLabel = new Label();
+        errorLabel.setFont(Font.font(10));
+        errorLabel.setStyle("-fx-text-fill: red;");
+
         Button calculateButton = new Button("Calculate");
         calculateButton.setOnAction(event -> {
-            ArrayList<String> selectedItems = new ArrayList<>();
+            // This clears any previous error before re-confirming any inputs the person has to type on the box.
+            errorLabel.setText("");
+
+            int[] quantities = new int[quantityFields.length];
             for (int i = 0; i < quantityFields.length; i++) {
-                int quantity = Integer.parseInt(quantityFields[i].getText());
-                for (int j = 0; j < quantity; j++) {
+                String text = quantityFields[i].getText().trim();
+                try {
+                    int q = Integer.parseInt(text);
+                    if (q < 0) {
+                        errorLabel.setText("Quantity for " + items[i].getName()
+                                + " can't be negative.");
+                        return;
+                    }
+                    quantities[i] = q;
+                } catch (NumberFormatException ex) {
+                    // Shows up when the user types letters, symbols, a decimal, or leaves the blank empty.
+                    errorLabel.setText("Quantity for " + items[i].getName()
+                            + " must be a whole number.");
+                    return;
+                }
+            }
+
+            ArrayList<String> selectedItems = new ArrayList<>();
+            for (int i = 0; i < quantities.length; i++) {
+                for (int j = 0; j < quantities[i]; j++) {
                     selectedItems.add(items[i].getName());
                 }
             }
@@ -197,9 +236,8 @@ public class SceneBuilder {
             totalValue.setText(String.format("$%.2f", total));
         });
 
-        HBox calculateBox = new HBox();
+        HBox calculateBox = new HBox(10, errorLabel, calculateButton);
         calculateBox.setAlignment(Pos.BASELINE_RIGHT);
-        calculateBox.getChildren().add(calculateButton);
         menuGrid.add(calculateBox, 0, items.length + 2, 3, 1);
 
         VBox root = new VBox(10);
@@ -212,7 +250,13 @@ public class SceneBuilder {
                 menuGrid,
                 resultsBox
         );
+        VBox.setMargin(menuGrid, new Insets(0, 20, 0, 20));
 
-        return new Scene(root, 300, 420);
+        stage.setMaxWidth(WIDTH * 2);
+        stage.setMaxHeight(HEIGHT * 2);
+        stage.setMinWidth(WIDTH);
+        stage.setMinHeight(HEIGHT);
+
+        return new Scene(root, WIDTH, HEIGHT);
     }
 }
